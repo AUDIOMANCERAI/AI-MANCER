@@ -1,5 +1,5 @@
-// FIX: Aliased Request and Response from express to ExpressRequest and ExpressResponse to resolve conflicts with global DOM types.
-import express, { Request as ExpressRequest, Response as ExpressResponse } from 'express';
+// FIX: Changed import to use the express namespace directly to resolve conflicts with global DOM types for Request and Response.
+import express from 'express';
 import cors from 'cors';
 import { GoogleGenAI } from '@google/genai';
 
@@ -14,8 +14,8 @@ if (!process.env.API_KEY) {
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-// FIX: Use the aliased `ExpressResponse` type from express for the 'res' parameter.
-const handleStream = async (res: ExpressResponse, stream: AsyncGenerator<any>) => {
+// FIX: Use express.Response for the 'res' parameter to ensure correct typing.
+const handleStream = async (res: express.Response, stream: AsyncGenerator<any>) => {
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Transfer-Encoding', 'chunked');
     for await (const chunk of stream) {
@@ -25,8 +25,8 @@ const handleStream = async (res: ExpressResponse, stream: AsyncGenerator<any>) =
     res.end();
 };
 
-// FIX: Use the aliased `ExpressRequest` and `ExpressResponse` types from express for the 'req' and 'res' parameters.
-app.post('/', async (req: ExpressRequest, res: ExpressResponse) => {
+// FIX: Use express.Request and express.Response for 'req' and 'res' parameters to ensure correct typing.
+app.post('/', async (req: express.Request, res: express.Response) => {
     try {
         const { action, payload } = req.body;
 
