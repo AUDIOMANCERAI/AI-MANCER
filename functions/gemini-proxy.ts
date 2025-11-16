@@ -1,11 +1,11 @@
-
+// FIX: Import Request and Response types from express to resolve conflicts with global DOM types.
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import { GoogleGenAI } from '@google/genai';
 
 const app = express();
 app.use(cors({ origin: true }));
-// FIX: Explicitly typing req and res in the route handler below helps TypeScript correctly resolve middleware signatures.
+// The explicit typing of `req` and `res` in the route handler below helps TypeScript correctly resolve middleware signatures.
 app.use(express.json());
 
 if (!process.env.API_KEY) {
@@ -14,23 +14,18 @@ if (!process.env.API_KEY) {
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-// FIX: Use the explicitly imported `Response` type from Express.
+// FIX: Use the imported `Response` type from express for the 'res' parameter.
 const handleStream = async (res: Response, stream: AsyncGenerator<any>) => {
-    // FIX: setHeader exists on express.Response
     res.setHeader('Content-Type', 'text/plain');
-    // FIX: setHeader exists on express.Response
     res.setHeader('Transfer-Encoding', 'chunked');
     for await (const chunk of stream) {
-        // FIX: write exists on express.Response
         res.write(JSON.stringify(chunk));
-        // FIX: write exists on express.Response
         res.write('\n');
     }
-    // FIX: end exists on express.Response
     res.end();
 };
 
-// FIX: Use the explicitly imported `Request` and `Response` types from Express.
+// FIX: Use the imported `Request` and `Response` types from express for the 'req' and 'res' parameters.
 app.post('/', async (req: Request, res: Response) => {
     try {
         const { action, payload } = req.body;
@@ -40,7 +35,7 @@ app.post('/', async (req: Request, res: Response) => {
                 const { prompt, useSearch } = payload;
                 const stream = await ai.models.generateContentStream({
                     model: 'gemini-2.5-flash',
-                    contents: [{ role: 'user', parts: [{ text: prompt }] }],
+                    contents: { role: 'user', parts: [{ text: prompt }] },
                     config: {
                         tools: useSearch ? [{ googleSearch: {} }] : undefined,
                     }
@@ -52,7 +47,7 @@ app.post('/', async (req: Request, res: Response) => {
                  const { prompt } = payload;
                  const response = await ai.models.generateContent({
                      model: 'gemini-2.5-flash',
-                     contents: [{ role: 'user', parts: [{ text: prompt }] }],
+                     contents: { role: 'user', parts: [{ text: prompt }] },
                  });
                  return res.status(200).json(response);
             }
@@ -61,7 +56,7 @@ app.post('/', async (req: Request, res: Response) => {
                  const { prompt } = payload;
                  const response = await ai.models.generateContent({
                      model: 'gemini-2.5-flash',
-                     contents: [{ role: 'user', parts: [{ text: prompt }] }],
+                     contents: { role: 'user', parts: [{ text: prompt }] },
                  });
                  return res.status(200).json(response);
             }
@@ -70,7 +65,7 @@ app.post('/', async (req: Request, res: Response) => {
                  const { intent } = payload;
                  const response = await ai.models.generateContent({
                      model: 'gemini-2.5-flash',
-                     contents: [{ role: 'user', parts: [{ text: intent }] }],
+                     contents: { role: 'user', parts: [{ text: intent }] },
                  });
                  return res.status(200).json(response);
             }
@@ -79,7 +74,7 @@ app.post('/', async (req: Request, res: Response) => {
                  const { intent } = payload;
                  const response = await ai.models.generateContent({
                      model: 'gemini-2.5-flash',
-                     contents: [{ role: 'user', parts: [{ text: intent }] }],
+                     contents: { role: 'user', parts: [{ text: intent }] },
                  });
                  return res.status(200).json(response);
             }

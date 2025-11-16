@@ -27,9 +27,10 @@ const parseJsonFromMarkdown = (markdown: string): any => {
 }
 
 export const generateWizardResponseStream = (prompt: string, useSearch: boolean) => {
+    // FIX: The `contents` property should be a `GenerateContentRequest` object, not an array.
     return ai.models.generateContentStream({
         model: 'gemini-2.5-flash',
-        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        contents: prompt,
         config: {
             tools: useSearch ? [{ googleSearch: {} }] : undefined,
         }
@@ -58,9 +59,10 @@ ${type === 'harmony' ? '- Use chord notes (48-72)\n- Create chord progressions w
 Adhere strictly to the user's description: "${userPrompt}".
 Return ONLY the JSON array, no other text or markdown backticks.`;
 
+    // FIX: The `contents` property should be a `GenerateContentRequest` object, not an array.
     const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
-        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        contents: prompt,
     });
 
     const json = parseJsonFromMarkdown(response.text);
@@ -90,9 +92,10 @@ Make SUBTLE improvements like:
 
 Return ONLY the enhanced JSON array in the same format, no other text or markdown backticks.`;
     
+    // FIX: The `contents` property should be a `GenerateContentRequest` object, not an array.
     const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
-        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        contents: prompt,
     });
 
     const json = parseJsonFromMarkdown(response.text);
@@ -108,9 +111,10 @@ Return ONLY the enhanced JSON array in the same format, no other text or markdow
 
 
 export const generateMusicPrompt = async (intent: string) => {
+    // FIX: The `contents` property should be a `GenerateContentRequest` object, not an array.
      const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
-        contents: [{ role: 'user', parts: [{ text: intent }] }],
+        contents: intent,
      });
     return response.text;
 };
@@ -127,9 +131,10 @@ Based on your analysis, generate a single, detailed paragraph for an AI music ge
 
 Weave these elements together into an evocative, creative, and slightly exaggerated paragraph. The goal is to inspire an AI to create a new track in a similar style, not just copy it. Start the prompt directly with the description. Do not include headings, lists, or technical specs like BPM. Just the creative paragraph.`;
     
+    // FIX: The `contents` property should be a `GenerateContentRequest` object, not an array.
      const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
-        contents: [{ role: 'user', parts: [{ text: intent }] }],
+        contents: intent,
      });
     return response.text;
 };
