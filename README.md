@@ -1,20 +1,23 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# 🎵 Audiomancer - Your AI Music Creation Suite
 
-# Run and deploy your AI Studio app
+Audiomancer is a modern web application that leverages the power of Google's Gemini AI to provide a suite of tools for music creation. It can assist with music theory, generate MIDI patterns from text prompts, create detailed prompts for other AI music platforms, and analyze music files.
 
-This contains everything you need to run your app locally.
+This application is designed to run in an environment where the Google AI API key is provided automatically.
 
-View your app in AI Studio: https://ai.studio/apps/drive/1eG6l6p9CsZgWQ9FdFqHQbCdz_o_EofK4
+## ✨ Features
 
-## Run Locally
+- **🧙 AI Wizard:** A chat interface to ask questions about music theory, production techniques, and more, with an optional web search capability.
+- **🎹 MIDI Generator:** Describe a musical idea (e.g., "a funky Daft Punk bassline") and get a complete MIDI pattern. Includes an interactive piano roll for editing and playback.
+- **✍️ Prompt Generator:** A step-by-step wizard to build the perfect, detailed prompt for AI music generators like Suno or Udio. It also features a "Song Analysis" mode to generate a prompt based on an existing track.
+- **📁 File Wizard:** Upload a music file (MIDI, WAV, MP3) to get an instant, detailed AI analysis of its potential sound structure, instrumentation, and style.
 
-**Prerequisites:**  Node.js
+## 🛠️ Tech Stack
 
+- **Frontend:** React, TypeScript, Vite, Tailwind CSS
+- **AI:** Google Gemini API (`@google/genai`)
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+---
+
+## 🚀 Running the App
+
+This application is ready to run. The necessary Google AI API key is automatically configured by the environment, so no special setup is required. Just launch the app and start creating!
