@@ -1,5 +1,5 @@
-// FIX: Import Request and Response types from express to resolve conflicts with global DOM types.
-import express, { Request, Response } from 'express';
+// FIX: Aliased Request and Response from express to ExpressRequest and ExpressResponse to resolve conflicts with global DOM types.
+import express, { Request as ExpressRequest, Response as ExpressResponse } from 'express';
 import cors from 'cors';
 import { GoogleGenAI } from '@google/genai';
 
@@ -14,8 +14,8 @@ if (!process.env.API_KEY) {
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-// FIX: Use the imported `Response` type from express for the 'res' parameter.
-const handleStream = async (res: Response, stream: AsyncGenerator<any>) => {
+// FIX: Use the aliased `ExpressResponse` type from express for the 'res' parameter.
+const handleStream = async (res: ExpressResponse, stream: AsyncGenerator<any>) => {
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Transfer-Encoding', 'chunked');
     for await (const chunk of stream) {
@@ -25,17 +25,18 @@ const handleStream = async (res: Response, stream: AsyncGenerator<any>) => {
     res.end();
 };
 
-// FIX: Use the imported `Request` and `Response` types from express for the 'req' and 'res' parameters.
-app.post('/', async (req: Request, res: Response) => {
+// FIX: Use the aliased `ExpressRequest` and `ExpressResponse` types from express for the 'req' and 'res' parameters.
+app.post('/', async (req: ExpressRequest, res: ExpressResponse) => {
     try {
         const { action, payload } = req.body;
 
         switch (action) {
             case 'wizardStream': {
                 const { prompt, useSearch } = payload;
+                // FIX: Updated `contents` to be a simple string for text prompts.
                 const stream = await ai.models.generateContentStream({
                     model: 'gemini-2.5-flash',
-                    contents: { role: 'user', parts: [{ text: prompt }] },
+                    contents: prompt,
                     config: {
                         tools: useSearch ? [{ googleSearch: {} }] : undefined,
                     }
@@ -45,36 +46,40 @@ app.post('/', async (req: Request, res: Response) => {
             
             case 'generateMidi': {
                  const { prompt } = payload;
+                 // FIX: Updated `contents` to be a simple string for text prompts.
                  const response = await ai.models.generateContent({
                      model: 'gemini-2.5-flash',
-                     contents: { role: 'user', parts: [{ text: prompt }] },
+                     contents: prompt,
                  });
                  return res.status(200).json(response);
             }
 
             case 'enhanceMidi': {
                  const { prompt } = payload;
+                 // FIX: Updated `contents` to be a simple string for text prompts.
                  const response = await ai.models.generateContent({
                      model: 'gemini-2.5-flash',
-                     contents: { role: 'user', parts: [{ text: prompt }] },
+                     contents: prompt,
                  });
                  return res.status(200).json(response);
             }
 
             case 'generatePrompt': {
                  const { intent } = payload;
+                 // FIX: Updated `contents` to be a simple string for text prompts.
                  const response = await ai.models.generateContent({
                      model: 'gemini-2.5-flash',
-                     contents: { role: 'user', parts: [{ text: intent }] },
+                     contents: intent,
                  });
                  return res.status(200).json(response);
             }
             
             case 'generatePromptFromSong': {
                  const { intent } = payload;
+                 // FIX: Updated `contents` to be a simple string for text prompts.
                  const response = await ai.models.generateContent({
                      model: 'gemini-2.5-flash',
-                     contents: { role: 'user', parts: [{ text: intent }] },
+                     contents: intent,
                  });
                  return res.status(200).json(response);
             }
