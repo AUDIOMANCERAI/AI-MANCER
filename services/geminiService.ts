@@ -1,6 +1,13 @@
+import { GoogleGenAI } from '@google/genai';
 import type { MidiNote, GenerationType, NoteName, Scale } from '../types';
 
-const PROXY_URL = '/api/gemini-proxy'; // This will be rewritten by Firebase Hosting
+const apiKey = process.env.API_KEY;
+
+if (!apiKey) {
+    throw new Error("API key not found. Please ensure it is configured in the execution environment.");
+}
+
+const ai = new GoogleGenAI({ apiKey });
 
 const parseJsonFromMarkdown = (markdown: string): any => {
     const match = markdown.match(/```json\n([\s\S]*?)\n```|(\[[\s\S]*\])/);
@@ -14,48 +21,19 @@ const parseJsonFromMarkdown = (markdown: string): any => {
     try {
         return JSON.parse(markdown);
     } catch (e) {
+        console.error("Failed to parse raw string as JSON:", e);
         return null;
     }
 }
 
-async function* streamGenerator(reader: ReadableStreamDefaultReader<Uint8Array>) {
-    const decoder = new TextDecoder();
-    let buffer = '';
-    while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
-        for (const line of lines) {
-            if (line.trim()) {
-                try {
-                    yield JSON.parse(line);
-                } catch (e) {
-                    console.error("Failed to parse stream chunk:", line, e);
-                }
-            }
+export const generateWizardResponseStream = (prompt: string, useSearch: boolean) => {
+    return ai.models.generateContentStream({
+        model: 'gemini-2.5-flash',
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        config: {
+            tools: useSearch ? [{ googleSearch: {} }] : undefined,
         }
-    }
-}
-
-
-export const generateWizardResponseStream = async (prompt: string, useSearch: boolean) => {
-    const response = await fetch(PROXY_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            action: 'wizardStream',
-            payload: { prompt, useSearch },
-        }),
     });
-
-    if (!response.ok || !response.body) {
-        throw new Error('Failed to get streaming response from proxy.');
-    }
-
-    const reader = response.body.getReader();
-    return streamGenerator(reader);
 };
 
 export const generateMidiPattern = async (type: GenerationType, key: NoteName, scale: Scale, tempo: number, bars: number, userPrompt: string): Promise<MidiNote[] | null> => {
@@ -80,18 +58,12 @@ ${type === 'harmony' ? '- Use chord notes (48-72)\n- Create chord progressions w
 Adhere strictly to the user's description: "${userPrompt}".
 Return ONLY the JSON array, no other text or markdown backticks.`;
 
-    const response = await fetch(PROXY_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            action: 'generateMidi',
-            payload: { prompt },
-        }),
+    const response = await ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
     });
 
-    if (!response.ok) throw new Error('Proxy request failed');
-    const data = await response.json();
-    const json = parseJsonFromMarkdown(data.text);
+    const json = parseJsonFromMarkdown(response.text);
      if (Array.isArray(json)) {
              return json.map(n => ({
                 note: n.note,
@@ -118,18 +90,12 @@ Make SUBTLE improvements like:
 
 Return ONLY the enhanced JSON array in the same format, no other text or markdown backticks.`;
     
-    const response = await fetch(PROXY_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            action: 'enhanceMidi',
-            payload: { prompt },
-        }),
+    const response = await ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
     });
 
-    if (!response.ok) throw new Error('Proxy request failed');
-    const data = await response.json();
-    const json = parseJsonFromMarkdown(data.text);
+    const json = parseJsonFromMarkdown(response.text);
     if (Array.isArray(json)) {
         return json.map(n => ({
             note: n.note,
@@ -142,18 +108,11 @@ Return ONLY the enhanced JSON array in the same format, no other text or markdow
 
 
 export const generateMusicPrompt = async (intent: string) => {
-     const response = await fetch(PROXY_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            action: 'generatePrompt',
-            payload: { intent },
-        }),
-    });
-
-    if (!response.ok) throw new Error('Proxy request failed');
-    const data = await response.json();
-    return data.text;
+     const response = await ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: [{ role: 'user', parts: [{ text: intent }] }],
+     });
+    return response.text;
 };
 
 export const generatePromptFromSong = async (songQuery: string): Promise<string> => {
@@ -168,16 +127,9 @@ Based on your analysis, generate a single, detailed paragraph for an AI music ge
 
 Weave these elements together into an evocative, creative, and slightly exaggerated paragraph. The goal is to inspire an AI to create a new track in a similar style, not just copy it. Start the prompt directly with the description. Do not include headings, lists, or technical specs like BPM. Just the creative paragraph.`;
     
-     const response = await fetch(PROXY_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            action: 'generatePromptFromSong',
-            payload: { intent },
-        }),
-    });
-
-    if (!response.ok) throw new Error('Proxy request failed');
-    const data = await response.json();
-    return data.text;
+     const response = await ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: [{ role: 'user', parts: [{ text: intent }] }],
+     });
+    return response.text;
 };
