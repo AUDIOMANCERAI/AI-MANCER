@@ -40,12 +40,12 @@ const App: React.FC = () => {
         <p className="text-violet-400 mb-8">Your AI Music Creation Suite</p>
       </header>
 
-      <div className="flex gap-1.5 mb-5 border-b-2 border-fuchsia-900/50">
+      <div className="flex gap-1.5 mb-5 border-b-2 border-fuchsia-900/50 overflow-x-auto">
         {TABS.map(({ id, label, icon }) => (
           <button
             key={id}
             onClick={() => setActiveTab(id)}
-            className={`py-3 px-6 bg-transparent border-b-4 text-sm md:text-base font-semibold transition-all duration-300 rounded-t-lg ${
+            className={`py-3 px-4 sm:px-6 bg-transparent border-b-4 text-sm md:text-base font-semibold transition-all duration-300 rounded-t-lg flex-shrink-0 ${
               activeTab === id
                 ? 'border-fuchsia-500 text-fuchsia-400 bg-fuchsia-500/20'
                 : 'border-transparent text-violet-400 hover:bg-fuchsia-500/10 hover:text-fuchsia-400'

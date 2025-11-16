@@ -50,10 +50,10 @@ Where:
 - duration: How many steps the note lasts (usually 1-4)
 
 For ${type}:
-${type === 'melody' ? '- Use higher notes (60-84)\n- Create melodic patterns with rhythm' : ''}
-${type === 'bassline' ? '- Use lower notes (36-48)\n- Create groovy, rhythmic bass patterns' : ''}
-${type === 'drums' ? '- Use notes for: Kick(36), Snare(38), Hi-hat closed(42), Hi-hat open(46)\n- Create drum patterns with typical rhythms' : ''}
-${type === 'harmony' ? '- Use chord notes (48-72)\n- Create chord progressions with multiple simultaneous notes' : ''}
+${type === 'melody' ? '- Use higher notes (60-84)\\n- Create melodic patterns with rhythm' : ''}
+${type === 'bassline' ? '- Use lower notes (36-48)\\n- Create groovy, rhythmic bass patterns' : ''}
+${type === 'drums' ? '- Use notes for: Kick(36), Snare(38), Hi-hat closed(42), Hi-hat open(46)\\n- Create drum patterns with typical rhythms' : ''}
+${type === 'harmony' ? '- Use chord notes (48-72)\\n- Create chord progressions with multiple simultaneous notes' : ''}
 
 Adhere strictly to the user's description: "${userPrompt}".
 Return ONLY the JSON array, no other text or markdown backticks.`;
