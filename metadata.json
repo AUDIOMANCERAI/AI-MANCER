@@ -1,0 +1,5 @@
+{
+  "name": "Audiomancer",
+  "description": "An AI-powered music creation suite that helps you with music theory, generates MIDI patterns, creates detailed music prompts, and analyzes your music files.",
+  "requestFramePermissions": []
+}

@@ -1,0 +1,23 @@
+{
+  "hosting": {
+    "public": "dist",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+       {
+        "source": "/api/gemini-proxy",
+        "function": {
+          "url": "PASTE_YOUR_CLOUD_FUNCTION_TRIGGER_URL_HERE",
+          "region": "us-central1"
+        }
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
