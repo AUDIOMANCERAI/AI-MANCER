@@ -1,5 +1,5 @@
-// FIX: Import Request and Response types directly from express to resolve conflicts with global DOM types.
-import express, { Request, Response } from 'express';
+// FIX: Import Request and Response types with aliases to resolve conflicts with global DOM types.
+import express, { Request as ExpressRequest, Response as ExpressResponse } from 'express';
 import cors from 'cors';
 import { GoogleGenAI } from '@google/genai';
 
@@ -14,8 +14,8 @@ if (!process.env.API_KEY) {
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-// FIX: Use the imported `Response` type for the 'res' parameter to ensure correct typing.
-const handleStream = async (res: Response, stream: AsyncGenerator<any>) => {
+// FIX: Use the imported `ExpressResponse` type for the 'res' parameter to ensure correct typing.
+const handleStream = async (res: ExpressResponse, stream: AsyncGenerator<any>) => {
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Transfer-Encoding', 'chunked');
     for await (const chunk of stream) {
@@ -25,8 +25,8 @@ const handleStream = async (res: Response, stream: AsyncGenerator<any>) => {
     res.end();
 };
 
-// FIX: Use the imported `Request` and `Response` types for 'req' and 'res' parameters to ensure correct typing.
-app.post('/', async (req: Request, res: Response) => {
+// FIX: Use the imported `ExpressRequest` and `ExpressResponse` types for 'req' and 'res' parameters to ensure correct typing.
+app.post('/', async (req: ExpressRequest, res: ExpressResponse) => {
     try {
         const { action, payload } = req.body;
 
