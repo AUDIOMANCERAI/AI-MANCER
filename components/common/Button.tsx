@@ -15,6 +15,7 @@ export const Button: React.FC<ButtonProps> = ({ as: Component = 'button', varian
   };
 
   return (
+    // FIX: Render component Polymorphically and cast props to any to avoid type conflicts between button and other element attributes.
     <Component className={`${baseClasses} ${variantClasses[variant]} ${className}`} {...props as any}>
       {children}
     </Component>
