@@ -1,10 +1,11 @@
 import { GoogleGenAI } from '@google/genai';
 import type { MidiNote, GenerationType, NoteName, Scale } from '../types';
 
-const apiKey = process.env.API_KEY;
+// Remove the duplicate - keep only this one
+const apiKey = import.meta.env.VITE_GOOGLE_AI_API_KEY;
 
 if (!apiKey) {
-    throw new Error("API key not found. Please ensure it is configured in the execution environment.");
+  throw new Error('API key not found. Please ensure it is configured in the execution environment.');
 }
 
 const ai = new GoogleGenAI({ apiKey });
@@ -27,7 +28,6 @@ const parseJsonFromMarkdown = (markdown: string): any => {
 }
 
 export const generateWizardResponseStream = (prompt: string, useSearch: boolean) => {
-    // FIX: Updated `contents` to be a simple string for text prompts.
     return ai.models.generateContentStream({
         model: 'gemini-2.5-flash',
         contents: prompt,
@@ -51,15 +51,14 @@ Where:
 - duration: How many steps the note lasts (usually 1-4)
 
 For ${type}:
-${type === 'melody' ? '- Use higher notes (60-84)\n- Create melodic patterns with rhythm' : ''}
-${type === 'bassline' ? '- Use lower notes (36-48)\n- Create groovy, rhythmic bass patterns' : ''}
-${type === 'drums' ? '- Use notes for: Kick(36), Snare(38), Hi-hat closed(42), Hi-hat open(46)\n- Create drum patterns with typical rhythms' : ''}
-${type === 'harmony' ? '- Use chord notes (48-72)\n- Create chord progressions with multiple simultaneous notes' : ''}
+${type === 'melody' ? '- Use higher notes (60-84)\\n- Create melodic patterns with rhythm' : ''}
+${type === 'bassline' ? '- Use lower notes (36-48)\\n- Create groovy, rhythmic bass patterns' : ''}
+${type === 'drums' ? '- Use notes for: Kick(36), Snare(38), Hi-hat closed(42), Hi-hat open(46)\\n- Create drum patterns with typical rhythms' : ''}
+${type === 'harmony' ? '- Use chord notes (48-72)\\n- Create chord progressions with multiple simultaneous notes' : ''}
 
 Adhere strictly to the user's description: "${userPrompt}".
 Return ONLY the JSON array, no other text or markdown backticks.`;
 
-    // FIX: Updated `contents` to be a simple string for text prompts.
     const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
         contents: prompt,
@@ -92,7 +91,6 @@ Make SUBTLE improvements like:
 
 Return ONLY the enhanced JSON array in the same format, no other text or markdown backticks.`;
     
-    // FIX: Updated `contents` to be a simple string for text prompts.
     const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
         contents: prompt,
@@ -111,7 +109,6 @@ Return ONLY the enhanced JSON array in the same format, no other text or markdow
 
 
 export const generateMusicPrompt = async (intent: string) => {
-     // FIX: Updated `contents` to be a simple string for text prompts.
      const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
         contents: intent,
@@ -131,10 +128,9 @@ Based on your analysis, generate a single, detailed paragraph for an AI music ge
 
 Weave these elements together into an evocative, creative, and slightly exaggerated paragraph. The goal is to inspire an AI to create a new track in a similar style, not just copy it. Start the prompt directly with the description. Do not include headings, lists, or technical specs like BPM. Just the creative paragraph.`;
     
-     // FIX: Updated `contents` to be a simple string for text prompts.
      const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
         contents: intent,
      });
     return response.text;
-};
+}
