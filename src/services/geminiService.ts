@@ -1,9 +1,7 @@
 import { GoogleGenAI } from '@google/genai';
 import type { MidiNote, GenerationType, NoteName, Scale } from '../types';
 
-const apiKey = import.meta.env.VITE_API_KEY;
-
-
+// Remove the duplicate - keep only this one
 const apiKey = import.meta.env.VITE_GOOGLE_AI_API_KEY;
 
 if (!apiKey) {
@@ -135,4 +133,4 @@ Weave these elements together into an evocative, creative, and slightly exaggera
         contents: intent,
      });
     return response.text;
-};
+}
