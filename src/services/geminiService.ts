@@ -4,8 +4,10 @@ import type { MidiNote, GenerationType, NoteName, Scale } from '../types';
 const apiKey = import.meta.env.VITE_API_KEY;
 
 
+const apiKey = import.meta.env.VITE_GOOGLE_AI_API_KEY;
+
 if (!apiKey) {
-    throw new Error("API key not found. Please ensure it is configured in the execution environment.");
+  throw new Error('API key not found. Please ensure it is configured in the execution environment.');
 }
 
 const ai = new GoogleGenAI({ apiKey });
