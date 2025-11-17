@@ -1,7 +1,8 @@
 import { GoogleGenAI } from '@google/genai';
 import type { MidiNote, GenerationType, NoteName, Scale } from '../types';
 
-const apiKey = process.env.API_KEY;
+const apiKey = import.meta.env.VITE_API_KEY;
+
 
 if (!apiKey) {
     throw new Error("API key not found. Please ensure it is configured in the execution environment.");
