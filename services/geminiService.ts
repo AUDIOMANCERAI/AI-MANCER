@@ -1,8 +1,7 @@
 import { GoogleGenAI } from '@google/genai';
 import type { MidiNote, GenerationType, NoteName, Scale } from '../types';
 
-// Remove the duplicate - keep only this one
-const apiKey = import.meta.env.VITE_GOOGLE_AI_API_KEY;
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
 if (!apiKey) {
   throw new Error('API key not found. Please ensure it is configured in the execution environment.');
